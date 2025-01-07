@@ -10,30 +10,35 @@ runs:
   steps:
     - uses: actions/checkout@v4
 
-    - name: Lint All Bicep Files
-      run: |
-        set -e
-        bicepFiles=$(find . -type f -name "*.bicep")
-        if [ -z "$bicepFiles" ]; then
-          echo "No Bicep files found—skipping lint."
-          exit 0
-        fi
+    - name: Lint Bicep
+      uses: azure/CLI@v2
+      with:
+        inlineScript: |
+          set -e
+          bicepFiles=$(find . -type f -name "*.bicep")
+          if [ -z "$bicepFiles" ]; then
+            echo "No Bicep files found—skipping lint."
+            exit 0
+          fi
 
-        mkdir -p sarif-results
-        for file in $bicepFiles; do
-          echo "Linting $file..."
-          sarifFileName="sarif-results/$(basename "$file" .bicep).sarif"
-          az bicep lint --file "$file" --diagnostics-format sarif > "$sarifFileName"
-        done
+          mkdir -p sarif-results
+          for file in $bicepFiles; do
+            echo "Linting $file..."
+            sarifFileName="sarif-results/$(basename "$file" .bicep).sarif"
+            az bicep lint --file "$file" --diagnostics-format sarif > "$sarifFileName"
+          done
 
     - name: Merge SARIF Files
+      uses: azure/CLI@v2
       run: |
         pip install sarif-tools
         sarif merge sarif-results/*.sarif --output merged-bicep.sarif
-
-    - name: Upload Merged SARIF
+    
+    - name: Upload SARIF
+      # 'always()' ensures we upload logs whether linting succeeds or fails
       if: ${{ always() }}
       uses: github/codeql-action/upload-sarif@v3
       with:
         category: bicep
+        # Use a glob so we can pick up *all* generated .sarif files
         sarif_file: merged-bicep.sarif
