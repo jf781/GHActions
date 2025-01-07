@@ -1,0 +1,29 @@
+name: static-analysis
+description: leverages checkov to perform static analysis on a repository
+inputs:
+  github-token:
+    description: Uses token as input since it cant be defined within action.yml
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Lint Bicep
+      uses: azure/CLI@v2
+      with:
+        inlineScript: |
+          bicepFiles=$(find . -type f -name "*.bicep")
+          for file in $bicepFiles; do
+            echo "Linting $file"
+            sarifFileName=$(basename $file | sed 's/\.bicep/\.sarif/g')
+            az bicep lint --file $file --diagnostics-format sarif > $sarifFile
+          done
+    
+    - name: Upload SARIF
+      if: (success() || failure())
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        category: bicep
+        sarif_file: .
