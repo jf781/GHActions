@@ -26,4 +26,4 @@ runs:
       uses: github/codeql-action/upload-sarif@v3
       with:
         category: bicep
-        sarif_file: .
+        sarif_file: main.sarif
