@@ -29,11 +29,10 @@ runs:
           done
 
     - name: Merge SARIF Files
-      uses: azure/CLI@v2
-      with:
-        inlineScript: |
-          pip install sarif-tools
-          sarif merge sarif-results/*.sarif --output merged-bicep.sarif
+      shell: bash
+      run: |
+        pip install sarif-tools
+        sarif merge sarif-results/*.sarif --output merged-bicep.sarif
     
     - name: Upload SARIF
       # 'always()' ensures we upload logs whether linting succeeds or fails
