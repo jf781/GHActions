@@ -18,7 +18,7 @@ runs:
           for file in $bicepFiles; do
             echo "Linting $file"
             sarifFileName=$(basename $file | sed 's/\.bicep/\.sarif/g')
-            az bicep lint --file $file --diagnostics-format sarif > $sarifFile
+            az bicep lint --file $file --diagnostics-format sarif > $sarifFileName
           done
     
     - name: Upload SARIF
