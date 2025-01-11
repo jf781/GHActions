@@ -47,11 +47,11 @@ runs:
     #     # Use a glob so we can pick up *all* generated .sarif files
     #     sarif_file: merged-bicep.sarif
 
-    - name: Define Environment Variables
-      shell: bash
-      run: |
-        export MEGALINTER_CONFIG=${{ inputs.config-file }}
-        echo "Metalinter_config = " $MEGALINTER_CONFIG
+    # - name: Define Environment Variables
+    #   shell: bash
+    #   run: |
+    #     export MEGALINTER_CONFIG=${{ inputs.config-file }}
+    #     echo "Metalinter_config = " $MEGALINTER_CONFIG
 
     # MegaLinter
     - name: MegaLinter
@@ -84,7 +84,7 @@ runs:
         #   }}
 
         GITHUB_TOKEN: ${{ inputs.github-token }}
-
+        METALINTER_CONFIG: ${{ inputs.config-file }}
         # ADD YOUR CUSTOM ENV VARIABLES HERE OR DEFINE THEM IN A FILE
         # .mega-linter.yml AT THE ROOT OF YOUR REPOSITORY
 
