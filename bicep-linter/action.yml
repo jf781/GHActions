@@ -7,7 +7,7 @@ inputs:
   config-file:
     description: The location of the checkov config file
     required: true
-    default: test/bicep/linter.yml
+    default: tests/bicep/linter.yml
 
 runs:
   using: composite
