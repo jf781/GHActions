@@ -7,7 +7,7 @@ inputs:
   config-file:
     description: The location of the checkov config file
     required: true
-    default: tests/bicep/linter.yml
+    default: tests/bicep/megaLinter.yml
 
 runs:
   using: composite
@@ -50,7 +50,7 @@ runs:
     - name: Define Environment Variables
       shell: bash
       run: |
-        export MEGALINTER_CONFIG=.mega-linter.yml
+        export MEGALINTER_CONFIG=${{ inputs.config-file}}
 
     # MegaLinter
     - name: MegaLinter
