@@ -50,7 +50,8 @@ runs:
     - name: Define Environment Variables
       shell: bash
       run: |
-        export MEGALINTER_CONFIG=${{ inputs.config-file}}
+        export MEGALINTER_CONFIG=${{ inputs.config-file }}
+        echo "Metalinter_config = " $MEGALINTER_CONFIG
 
     # MegaLinter
     - name: MegaLinter
