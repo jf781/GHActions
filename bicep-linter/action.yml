@@ -82,7 +82,7 @@ runs:
         #     contains(fromJSON('["refs/heads/main", "refs/heads/master"]'), github.ref)
         #   }}
 
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
 
         # ADD YOUR CUSTOM ENV VARIABLES HERE OR DEFINE THEM IN A FILE
         # .mega-linter.yml AT THE ROOT OF YOUR REPOSITORY
