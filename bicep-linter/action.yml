@@ -22,7 +22,7 @@ runs:
           set -e
           az bicep lint --file ./resourceGroups/resourceGroups.bicep --diagnostics-format sarif > resourceGroup.sarif
           rgResults=$(cat resourceGroup.sarif | jq -r '.runs[].results')
-          echo "rgResults=$rgResults" >> $GITHUB_ENV
+          echo "results=$rgResults" >> $GITHUB_OUTPUT
     
     - name: Upload Resource Group linting results
       if: ${{ always() }}
@@ -39,7 +39,7 @@ runs:
           set -e
           az bicep lint --file ./resources/resources.bicep --diagnostics-format sarif > resources.sarif
           resourceResults=$(cat resources.sarif | jq -r '.runs[].results')
-          echo "resourceResults=$resourceResults" >> $GITHUB_ENV
+          echo "results=$resourceResults" >> $GITHUB_OUTPUT
     
     - name: Upload Resource  linting results 
       if: ${{ always() }}
