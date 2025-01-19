@@ -15,6 +15,7 @@ runs:
     - uses: actions/checkout@v4
 
     - name: Lint Bicep - Resource Group
+      id: rg-lint
       uses: azure/CLI@v2
       with:
         inlineScript: |
@@ -31,6 +32,7 @@ runs:
         sarif_file: resourceGroup.sarif
 
     - name: Lint Bicep - Resources
+      id: resources-lint
       uses: azure/CLI@v2
       with:
         inlineScript: |
@@ -49,15 +51,20 @@ runs:
     - name: Linting Results
       shell: bash
       run: | 
-        if [ "${{ env.rgResults }}" == "[]"]; then
-          echo "Resource Group Bicep files are clean"
-        else
-          echo "Resource Group Bicep files have issues"
+        rgResults="${{ steps.rg-lint.outputs.results }}"
+        resourceResults="${{ steps.resources-lint.outputs.results }}"
+
+        echo "Resource Group Lint Results: $rgResults"
+        echo "Resources Lint Results: $resourceResults"
+
+        if [ "$rgResults" != "[]" ]; then
+          echo "Resource Group Bicep files have issues!"
           exit 1
         fi
-        if [ "${{ env.resourceResults }}" == "[]"]; then
-          echo "Resources Bicep files are clean"
-        else
-          echo "Resources Bicep files have issues"
+
+        if [ "$resourceResults" != "[]" ]; then
+          echo "Resources Bicep files have issues!"
           exit 1
         fi
+
+        echo "All Bicep lint checks passed successfully!"
