@@ -49,13 +49,13 @@ runs:
     - name: Linting Results
       shell: bash
       run: | 
-        if [ ${{ env.rgResults }} == "[]"]; then
+        if [ "${{ env.rgResults }}" == "[]"]; then
           echo "Resource Group Bicep files are clean"
         else
           echo "Resource Group Bicep files have issues"
           exit 1
         fi
-        if [ ${{ env.resourceResults }} == "[]"]; then
+        if [ "${{ env.resourceResults }}" == "[]"]; then
           echo "Resources Bicep files are clean"
         else
           echo "Resources Bicep files have issues"
