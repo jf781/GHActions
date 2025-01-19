@@ -12,6 +12,7 @@ inputs:
 runs:
   using: composite
   steps:
+    step:
     - uses: actions/checkout@v4
 
     - name: Lint Bicep - Resource Group
@@ -21,7 +22,7 @@ runs:
           set -e
           az bicep lint --file ./resourceGroups/resourceGroups.bicep --diagnostics-format sarif > resourceGroup.sarif
           rgResults=$(cat resourceGroup.sarif | jq -r '.runs[].results')
-          echo $rgResults >> $GITHUB_ENV
+          echo "rgResults=$rgResults" >> $GITHUB_ENV
     
     - name: Upload Resource Group linting results
       if: ${{ always() }}
@@ -37,7 +38,7 @@ runs:
           set -e
           az bicep lint --file ./resources/resources.bicep --diagnostics-format sarif > resources.sarif
           resourceResults=$(cat resources.sarif | jq -r '.runs[].results')
-          echo $resourceResults >> $GITHUB_ENV
+          echo "resourceResults=$resourceResults" >> $GITHUB_ENV
     
     - name: Upload Resource  linting results 
       if: ${{ always() }}
