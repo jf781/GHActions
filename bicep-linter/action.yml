@@ -20,6 +20,7 @@ runs:
         inlineScript: |
           set -e
           az bicep lint --file ./resourceGroups/resourceGroups.bicep --diagnostics-format sarif > resourceGroup.sarif
+          cat resourceGroup.sarif
     
     - name: Upload Resource Group linting results
       if: ${{ always() }}
@@ -35,6 +36,7 @@ runs:
         inlineScript: |
           set -e
           az bicep lint --file ./resources/resources.bicep --diagnostics-format sarif > resources.sarif
+          cat resources.sarif
     
     - name: Upload Resource  linting results 
       if: ${{ always() }}
