@@ -19,9 +19,7 @@ runs:
       with:
         inlineScript: |
           set -e
-          ls
           az bicep lint --file ./resourceGroups/resourceGroups.bicep --diagnostics-format sarif > resourceGroup.sarif
-          done
     
     - name: Upload Resource Groups 
       # 'always()' ensures we upload logs whether linting succeeds or fails
@@ -36,8 +34,7 @@ runs:
       with:
         inlineScript: |
           set -e
-            az bicep lint --file ./resources/resources.bicep --diagnostics-format sarif > resources.sarif
-          done
+          az bicep lint --file ./resources/resources.bicep --diagnostics-format sarif > resources.sarif
     
     - name: Upload Resource Groups 
       # 'always()' ensures we upload logs whether linting succeeds or fails
