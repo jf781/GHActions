@@ -14,89 +14,34 @@ runs:
   steps:
     - uses: actions/checkout@v4
 
-    # - name: Lint Bicep
-    #   uses: azure/CLI@v2
-    #   with:
-    #     inlineScript: |
-    #       set -e
-    #       bicepFiles=$(find . -type f -name "*.bicep")
-    #       if [ -z "$bicepFiles" ]; then
-    #         echo "No Bicep files found—skipping lint."
-    #         exit 0
-    #       fi
-
-    #       mkdir -p sarif-results
-    #       for file in $bicepFiles; do
-    #         echo "Linting $file..."
-    #         sarifFileName="sarif-results/$(basename "$file" .bicep).sarif"
-    #         az bicep lint --file "$file" --diagnostics-format sarif > "$sarifFileName"
-    #       done
-
-    # - name: Merge SARIF Files
-    #   shell: bash
-    #   run: |
-    #     pip install sarif-tools
-    #     sarif merge sarif-results/*.sarif --output merged-bicep.sarif
-    
-    # - name: Upload SARIF
-    #   # 'always()' ensures we upload logs whether linting succeeds or fails
-    #   if: ${{ always() }}
-    #   uses: github/codeql-action/upload-sarif@v3
-    #   with:
-    #     category: bicep
-    #     # Use a glob so we can pick up *all* generated .sarif files
-    #     sarif_file: merged-bicep.sarif
-
-    # - name: Define Environment Variables
-    #   shell: bash
-    #   run: |
-    #     export MEGALINTER_CONFIG=${{ inputs.config-file }}
-    #     echo "Metalinter_config = " $MEGALINTER_CONFIG
-
-    # MegaLinter
-    - name: MegaLinter
-
-      # You can override MegaLinter flavor used to have faster performances
-      # More info at https://megalinter.io/latest/flavors/
-      uses: oxsecurity/megalinter@v8
-
-      id: dotnet
-
-      # All available variables are described in documentation
-      # https://megalinter.io/latest/configuration/
-      env:
-        # Validates all source when push on main, else just the git diff with
-        # main. Override with true if you always want to lint all sources
-        #
-        # To validate the entire codebase, set to:
-        VALIDATE_ALL_CODEBASE: true
-        #
-        # To validate only diff with main, set to:
-        # VALIDATE_ALL_CODEBASE: >-
-        #   ${{
-        #     github.event_name == 'push' &&
-        #     contains(fromJSON('["refs/heads/main", "refs/heads/master"]'), github.ref)
-        #   }}
-        # VALIDATE_ALL_CODEBASE: >-
-        #   ${{
-        #     github.event_name == 'push' &&
-        #     contains(fromJSON('["refs/heads/main", "refs/heads/master"]'), github.ref)
-        #   }}
-
-        GITHUB_TOKEN: ${{ inputs.github-token }}
-        MEGALINTER_CONFIG: ${{ inputs.config-file }}
-        # ADD YOUR CUSTOM ENV VARIABLES HERE OR DEFINE THEM IN A FILE
-        # .mega-linter.yml AT THE ROOT OF YOUR REPOSITORY
-
-        # Uncomment to disable copy-paste and spell checks
-        # DISABLE: COPYPASTE,SPELL
-
-    # Upload MegaLinter artifacts
-    - name: Archive production artifacts
-      if: success() || failure()
-      uses: actions/upload-artifact@v4
+    - name: Lint Bicep - Resource Group
+      uses: azure/CLI@v2
       with:
-        name: MegaLinter reports
-        path: |
-          megalinter-reports
-          mega-linter.log
+        inlineScript: |
+          set -e
+            az bicep lint --file ./resourceGroups/resourceGroup.bicep --diagnostics-format sarif > resourceGroup.sarif
+          done
+    
+    - name: Upload Resource Groups 
+      # 'always()' ensures we upload logs whether linting succeeds or fails
+      if: ${{ always() }}
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        category: bicep
+        sarif_file: resourceGroup.sarif
+
+    - name: Lint Bicep - Resources
+      uses: azure/CLI@v2
+      with:
+        inlineScript: |
+          set -e
+            az bicep lint --file ./resources/resources.bicep --diagnostics-format sarif > resources.sarif
+          done
+    
+    - name: Upload Resource Groups 
+      # 'always()' ensures we upload logs whether linting succeeds or fails
+      if: ${{ always() }}
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        category: bicep
+        sarif_file: resources.sarif
