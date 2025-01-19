@@ -19,7 +19,8 @@ runs:
       with:
         inlineScript: |
           set -e
-            az bicep lint --file ./resourceGroups/resourceGroup.bicep --diagnostics-format sarif > resourceGroup.sarif
+          ls
+          az bicep lint --file ./resourceGroups/resourceGroup.bicep --diagnostics-format sarif > resourceGroup.sarif
           done
     
     - name: Upload Resource Groups 
