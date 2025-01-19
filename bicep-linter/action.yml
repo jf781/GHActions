@@ -26,7 +26,8 @@ runs:
       if: ${{ always() }}
       uses: github/codeql-action/upload-sarif@v3
       with:
-        category: bicep
+        category: resourceGroup
+        tool: bicep
         sarif_file: resourceGroup.sarif
 
     - name: Lint Bicep - Resources
@@ -41,5 +42,6 @@ runs:
       if: ${{ always() }}
       uses: github/codeql-action/upload-sarif@v3
       with:
-        category: bicep
+        category: resources
+        tool: bicep
         sarif_file: resources.sarif
