@@ -47,6 +47,7 @@ runs:
         sarif_file: resources.sarif
 
     - name: Linting Results
+      shell: bash
       run: | 
         if [ ${{ env.rgResults }} == "[]"]; then
           echo "Resource Group Bicep files are clean"
