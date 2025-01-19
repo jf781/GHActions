@@ -12,7 +12,6 @@ inputs:
 runs:
   using: composite
   steps:
-    step:
     - uses: actions/checkout@v4
 
     - name: Lint Bicep - Resource Group
