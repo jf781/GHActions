@@ -21,7 +21,7 @@ runs:
           set -e
           az bicep lint --file ./resourceGroups/resourceGroups.bicep --diagnostics-format sarif > resourceGroup.sarif
           rgResults=$(cat resourceGroup.sarif | jq -r '.runs[].results')
-          echo $rgResults
+          echo $rgResults >> $GITHUB_ENV
     
     - name: Upload Resource Group linting results
       if: ${{ always() }}
@@ -36,7 +36,8 @@ runs:
         inlineScript: |
           set -e
           az bicep lint --file ./resources/resources.bicep --diagnostics-format sarif > resources.sarif
-          cat resources.sarif
+          resourceResults=$(cat resources.sarif | jq -r '.runs[].results')
+          echo $resourceResults >> $GITHUB_ENV
     
     - name: Upload Resource  linting results 
       if: ${{ always() }}
@@ -44,3 +45,18 @@ runs:
       with:
         category: resources:bicep
         sarif_file: resources.sarif
+
+    - name: Linting Results
+      run: | 
+        if [ ${{ env.rgResults }} == "[]"]; then
+          echo "Resource Group Bicep files are clean"
+        else
+          echo "Resource Group Bicep files have issues"
+          exit 1
+        fi
+        if [ ${{ env.resourceResults }} == "[]"]; then
+          echo "Resources Bicep files are clean"
+        else
+          echo "Resources Bicep files have issues"
+          exit 1
+        fi
