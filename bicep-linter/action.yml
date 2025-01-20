@@ -59,8 +59,8 @@ runs:
     - name: Linting Results
       shell: bash
       run: | 
-        rgResults="${{ steps.rg-lint.outputs.results }}"
-        resourceResults="${{ steps.resources-lint.outputs.results }}"
+        rgResults="${{ steps.rg-lint.outputs.successul }}"
+        resourceResults="${{ steps.resources-lint.outputs.successul }}"
 
         echo "Resource Group Lint Results: $rgResults"
         echo "Resources Lint Results: $resourceResults"
