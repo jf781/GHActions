@@ -21,8 +21,12 @@ runs:
         inlineScript: |
           set -e
           az bicep lint --file ./resourceGroups/resourceGroups.bicep --diagnostics-format sarif > resourceGroup.sarif
-          rgResults=$(cat resourceGroup.sarif | jq -r '.runs[].results')
-          echo "results=$rgResults" >> $GITHUB_OUTPUT
+          results=$(cat resourceGroup.sarif | jq -r '.runs[].results')
+          if [  "$results" == "[]"]; then
+            echo "successul=true" >> $GITHUB_OUTPUT
+          else 
+            echo "successul=false" >> $GITHUB_OUTPUT
+          fi
     
     - name: Upload Resource Group linting results
       if: ${{ always() }}
@@ -38,8 +42,12 @@ runs:
         inlineScript: |
           set -e
           az bicep lint --file ./resources/resources.bicep --diagnostics-format sarif > resources.sarif
-          resourceResults=$(cat resources.sarif | jq -r '.runs[].results')
-          echo "results=$resourceResults" >> $GITHUB_OUTPUT
+          results=$(cat resources.sarif | jq -r '.runs[].results')
+          if [  "$results" == "[]"]; then
+            echo "successul=true" >> $GITHUB_OUTPUT
+          else 
+            echo "successul=false" >> $GITHUB_OUTPUT
+          fi
     
     - name: Upload Resource  linting results 
       if: ${{ always() }}
@@ -57,12 +65,12 @@ runs:
         echo "Resource Group Lint Results: $rgResults"
         echo "Resources Lint Results: $resourceResults"
 
-        if [ "$rgResults" != "[]" ]; then
+        if [ "$rgResults" == "true" ]; then
           echo "Resource Group Bicep files have issues!"
           exit 1
         fi
 
-        if [ "$resourceResults" != "[]" ]; then
+        if [ "$resourceResults" == "true" ]; then
           echo "Resources Bicep files have issues!"
           exit 1
         fi
